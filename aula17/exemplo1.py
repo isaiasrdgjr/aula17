@@ -44,20 +44,40 @@ try:
     q1 = np.quantile(array_roubo_veiculo, 0.25, method='weibull')
     q2 = np.quantile(array_roubo_veiculo, 0.50, method='weibull')
     q3 = np.quantile(array_roubo_veiculo, 0.75, method='weibull')
-    
+
     print("\nMEDIDAS DE POSIÇÃO")
     print(30*"=")
     print(f"Q1: {q1}, \nQ2: {q2}, \nQ3: {q3}")
 
     df_roubo_veiculo_menores = df_roubo[df_roubo['roubo_veiculo'] < q1]
-    
     df_roubo_veiculo_maiores = df_roubo[df_roubo['roubo_veiculo'] > q3]
 
     print("\nMEDIDAS DE ROUBOS POR CIDADE")
     print(30*"=")
     print(f"Cidades com menores índices de roubo: \n{df_roubo_veiculo_menores.sort_values('roubo_veiculo', ascending=True)}")
-    
     print(f"\nCidades com maiores índices de roubo: \n{df_roubo_veiculo_maiores.sort_values('roubo_veiculo', ascending=False)}")
+
+    iqr = q3 - q1
+
+    limite_superior = q3 + (1.5 * iqr)
+    limite_inferior = q1 - (1.5 * iqr)
+
+    df_roubo_veiculo_outliers_superiores = df_roubo[df_roubo['roubo_veiculo'] > limite_superior]
+    df_roubo_veiculo_outliers_inferiores = df_roubo[df_roubo['roubo_veiculo'] < limite_inferior]
+
+    print('Outliers inferiores')
+    print(30*'=')
+    if len(df_roubo_veiculo_outliers_inferiores) == 0:
+        print('Não há outliers inferiores')
+    else:
+        print(f"\n{df_roubo_veiculo_outliers_inferiores.sort_values('roubo_veiculo', ascending=True)}")
+
+    print('\nOutliers superiores')
+    print(30*'=')
+    if len(df_roubo_veiculo_outliers_superiores) == 0:
+        print('Não há outliers superiores')
+    else:
+        print(f"\n{df_roubo_veiculo_outliers_superiores.sort_values('roubo_veiculo', ascending=False)}")
 
 except Exception as e:
     print(f'Erro: {e}')
